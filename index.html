@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riemannian Liquid Spatio-Temporal Graph Network | WWW 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Crimson+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7fafc;
+      --panel: rgba(255, 255, 255, 0.85);
+      --text: #0f172a;
+      --muted: #4b5563;
+      --primary: #0ea5e9;
+      --accent: #f97316;
+      --border: rgba(15, 23, 42, 0.08);
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.12), transparent 36%),
+                  radial-gradient(circle at 80% 0%, rgba(249, 115, 22, 0.1), transparent 32%),
+                  var(--bg);
+      font-family: 'Space Grotesk', 'Crimson Pro', 'Helvetica Neue', 'Trebuchet MS', sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    .page {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 6vw 96px;
+    }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('image/rlstg_main_back.png') center/cover no-repeat;
+      transform: scale(1.02);
+      filter: saturate(1.05);
+    }
+    .hero-inner {
+      position: relative;
+      padding: 64px 6vw 72px;
+      max-width: 820px;
+      text-align: left;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--primary);
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .eyebrow span {
+      height: 6px;
+      width: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 6px rgba(14, 165, 233, 0.22);
+    }
+    h1 {
+      margin: 6px 0 26px;
+      font-size: clamp(36px, 4vw + 8px, 52px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .cta-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 26px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.8);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 17px;
+      letter-spacing: 0.01em;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .button.primary {
+      background: rgba(0, 0, 0, 0.8);
+      color: #ffffff;
+      box-shadow: none;
+    }
+    .button.secondary {
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+      background: rgba(0, 0, 0, 0.9);
+    }
+    .button.primary:hover {
+      background: rgba(0, 0, 0, 0.9);
+    }
+    .section {
+      margin-top: 35px;
+    }
+    .section h2 {
+      margin: 0 0 22px;
+      font-size: 26px;
+      letter-spacing: -0.01em;
+    }
+    .authors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .author-card {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--panel);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+      position: relative;
+    }
+    .author-name {
+      margin: 0 0 6px;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .author-note {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .author-meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .authors-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 12px;
+    }
+    .author-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .author-name-inline {
+      font-weight: 700;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .author-marker {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 6px;
+      border-radius: 10px;
+      background: rgba(14, 165, 233, 0.12);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .author-marker.alt {
+      background: rgba(249, 115, 22, 0.12);
+      color: var(--accent);
+    }
+    .author-affil {
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .corner-notes {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .corner-badge {
+      padding: 6px 10px;
+      border-radius: 10px;
+      background: rgba(14, 165, 233, 0.12);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .corner-badge.alt {
+      background: rgba(249, 115, 22, 0.12);
+      color: var(--accent);
+    }
+    .abstract {
+      max-width: 900px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--panel);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+      margin: 0 auto;
+    }
+    .abstract p {
+      margin: 0;
+      font-size: 16px;
+      color: var(--muted);
+    }
+    .copy-btn {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .copy-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.15);
+      background: rgba(0, 0, 0, 0.9);
+    }
+    .copy-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 12px rgba(15, 23, 42, 0.12);
+    }
+    .bibtex-card {
+      position: relative;
+    }
+    .bibtex-card .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+    }
+    @media (max-width: 720px) {
+      .hero-inner { padding: 70px 6vw 60px; }
+      .cta-row { width: 100%; }
+      .button { justify-content: center; flex: 1 1 180px; }
+    }
+    @media (max-width: 640px) {
+      .corner-notes {
+        position: static;
+        justify-content: flex-start;
+        margin-bottom: 10px;
+      }
+      .author-card {
+        padding-top: 18px;
+      }
+      .bibtex-card .copy-btn {
+        position: static;
+        margin-bottom: 12px;
+        display: inline-flex;
+      }
+    }
+  </style>
+</head>
+  <body>
+  <header class="hero">
+    <div class="hero-inner">
+      <h1>Riemannian Liquid Spatio-Temporal Graph Network</h1>
+      <div class="eyebrow"><span aria-hidden="true"></span> Accepted • WWW 2026</div>
+      <div class="cta-row">
+        <a class="button primary" href="#" target="_blank" rel="noopener">Paper</a>
+        <a class="button secondary" href="https://github.com/LuLiangsi/RLSTG" target="_blank" rel="noopener">Code</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="section" id="authors">
+      <h2>Authors</h2>
+      <div class="authors-grid">
+        <article class="author-card">
+          <div class="corner-notes">
+            <span class="corner-badge">† Co-first author</span>
+            <span class="corner-badge alt">✉ Corresponding author</span>
+          </div>
+          <ul class="authors-list">
+            <li class="author-item">
+              <span class="author-name-inline">Liangsi Lu <span class="author-marker">†</span></span>
+              <span class="author-affil">Guangdong University of Technology, Guangzhou, China</span>
+            </li>
+            <li class="author-item">
+              <span class="author-name-inline">Jingchao Wang <span class="author-marker">†</span></span>
+              <span class="author-affil">Peking University, Beijing, China</span>
+            </li>
+            <li class="author-item">
+              <span class="author-name-inline">Zhaorong Dai</span>
+              <span class="author-affil">South China Agricultural University, Guangzhou, China</span>
+            </li>
+            <li class="author-item">
+              <span class="author-name-inline">Hanqian Liu</span>
+              <span class="author-affil">Sun Yat-Sen University, Guangzhou, China</span>
+            </li>
+            <li class="author-item">
+              <span class="author-name-inline">Yang Shi <span class="author-marker alt">✉</span></span>
+              <span class="author-affil">Guangdong University of Technology, Guangzhou, China</span>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="abstract">
+      <h2>Abstract</h2>
+      <div class="abstract">
+        <p>
+          Liquid Time-Constant networks (LTCs), a type of continuous-time graph neural network, excel at modeling irregularly-sampled dynamics but are fundamentally confined to Euclidean space. This limitation introduces significant geometric distortion when representing real-world graphs with inherent non-Euclidean structures (e.g., hierarchies and cycles), degrading representation quality. To overcome this limitation, we introduce the <strong>R</strong>iemannian <strong>L</strong>iquid <strong>S</strong>patio-<strong>T</strong>emporal <strong>G</strong>raph Network (RLSTG), a framework that unifies continuous-time liquid dynamics with the geometric inductive biases of Riemannian manifolds. RLSTG models graph evolution through an Ordinary Differential Equation (ODE) formulated directly on a curved manifold, enabling it to faithfully capture the intrinsic geometry of both structurally static and dynamic spatio-temporal graphs. Moreover, we provide rigorous theoretical guarantees for RLSTG, extending stability theorems of LTCs to the Riemannian domain and quantifying its expressive power via state trajectory analysis. Extensive experiments on real-world benchmarks demonstrate that, by combining advanced temporal dynamics with a Riemannian spatial representation, RLSTG achieves superior performance on graphs with complex structures.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="bibtex">
+      <h2>BibTeX</h2>
+      <div class="abstract bibtex-card">
+        <button class="copy-btn" type="button" data-copy-bib>Copy</button>
+        <pre id="bibtex-entry" style="margin: 0; font-family: 'Space Grotesk', monospace; font-size: 14px; color: var(--muted); white-space: pre-wrap;">@inproceedings{lu2026rlstg,
+  title     = {Riemannian Liquid Spatio-Temporal Graph Network},
+  author    = {Lu, Liangsi and Wang, Jingchao and Dai, Zhaorong and Liu, Hanqian and Shi, Yang},
+  year      = {2026},
+}</pre>
+      </div>
+    </section>
+  </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyBtn = document.querySelector('[data-copy-bib]');
+      const bibEl = document.getElementById('bibtex-entry');
+      if (!copyBtn || !bibEl) return;
+
+      const bibText = bibEl.textContent.trim();
+      const originalLabel = copyBtn.textContent;
+
+      const setLabel = (text) => {
+        copyBtn.textContent = text;
+        setTimeout(() => { copyBtn.textContent = originalLabel; }, 1500);
+      };
+
+      copyBtn.addEventListener('click', async () => {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(bibText);
+          } else {
+            const tempArea = document.createElement('textarea');
+            tempArea.value = bibText;
+            document.body.appendChild(tempArea);
+            tempArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempArea);
+          }
+          setLabel('Copied!');
+        } catch (err) {
+          setLabel('Failed');
+          console.error('Copy failed', err);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
